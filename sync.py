@@ -9,6 +9,7 @@ import six
 from elasticsearch.helpers import bulk, scan
 from cassandra.cluster import Cluster
 from cassandra.query import BatchType, BatchStatement, dict_factory
+import time
 
 log = logging.getLogger()
 
@@ -27,6 +28,8 @@ class Sincronizador():
         self.ca_session.row_factory = dict_factory
 
         self.es_session = Elasticsearch()
+
+        self.marker = int(time.time())
 
     def bulk_es_insert(self, docs):
         """
@@ -70,6 +73,23 @@ class Sincronizador():
         ca_cursor = self.ca_session.execute(query_ca)
 
         return ca_cursor
+
+    def sync(self):
+        last_marker = self.marker
+        current_marker = int(time.time())
+
+        # sincroniza do Elasticsearch para o Cassandra
+        docs = []
+        query = {"filter": {"range": {"timestamp": {"gte": last_marker, "lte": current_marker}}}}
+        docs = self.scan_es(query)
+
+        if docs:
+            self.insert_ca(docs)
+
+        # sincroniza do Cassandra para o Elasticsearch
+        # TODO
+
+        self.marker = current_marker
 
 
 def patch_cql_types():
