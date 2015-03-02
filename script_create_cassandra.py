@@ -4,7 +4,7 @@ from datetime import datetime
 from cassandra.cluster import Cluster
 import logging
 import uuid
-
+import time
 
 log = logging.getLogger()
 log.setLevel('INFO')
@@ -73,9 +73,9 @@ def main():
     logging.basicConfig()
     client = SimpleClient()
     client.connect(['127.0.0.1'])
-    # client.create_schema()
-    # time.sleep(10)
-    # client.load_data()
+    client.create_schema()
+    time.sleep(10)
+    client.load_data()
     client.query_schema()
     client.close()
 

@@ -15,6 +15,9 @@ log = logging.getLogger()
 
 
 class Sincronizador():
+    """
+    Classe que implementa a sincronização de dados entre os dois bancos
+    """
 
     def __init__(self, intervalo):
         self.id = "id"
@@ -62,6 +65,10 @@ class Sincronizador():
         return docs
 
     def insert_ca(self, docs):
+        """
+        Realiza a inserção de dados no Cassandra a partir de uma lista de documentos
+        :param docs: Lista de documentos a serem inseridos no Cassandra
+        """
         insert_stat = self.ca_session.prepare("INSERT INTO songs (id, title, artist, timestamp) VALUES (?, ?, ?, ?);")
         batch = BatchStatement()
         for doc in docs:
@@ -69,12 +76,20 @@ class Sincronizador():
             batch.add(insert_stat, doc)
 
     def search_ca(self):
+        """
+        Realiza uma busca por todos os documentos no Cassandra
+        :return: cursor contendo o resultado da query
+        """
         query_ca = "SELECT * FROM music.songs;"
         ca_cursor = self.ca_session.execute(query_ca)
 
         return ca_cursor
 
     def sync(self):
+        """
+        Realiza a sincronização dos dados
+        """
+
         last_marker = self.marker
         current_marker = int(time.time())
 
@@ -101,6 +116,9 @@ class Sincronizador():
 
 
 def patch_cql_types():
+    """
+    Permite o Cassandra aceitar string de hexadecimais como id de um documento
+    """
 
     from cassandra.cqltypes import UUIDType
 
@@ -113,5 +131,3 @@ def patch_cql_types():
         return saved_serialize(obj, protocol_version)
 
     UUIDType.serialize = serialize_ex
-
-# query example: {"filter": {"range": {"timestamp": {"gte":"2015-02-24T17:36:23.632650", "lte": "2015-02-25T17:36:23.645119"}}}}
