@@ -87,7 +87,15 @@ class Sincronizador():
             self.insert_ca(docs)
 
         # sincroniza do Cassandra para o Elasticsearch
-        # TODO
+        docs = []
+        ca_cursor = self.search_ca()
+        for doc in ca_cursor:
+            if doc["timestamp"] < last_marker or doc["timestamp"] > current_marker:
+                continue
+            docs.append(doc)
+
+        if docs:
+            self.bulk_es_insert(docs)
 
         self.marker = current_marker
 
