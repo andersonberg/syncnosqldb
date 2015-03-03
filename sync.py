@@ -103,7 +103,7 @@ class Sincronizador():
 
         if docs:
             self.insert_ca(docs)
-            print("sync from es to ca")
+            print("Sincronização do Elasticsearch para o Cassandra")
 
         # sincroniza do Cassandra para o Elasticsearch
         docs = []
@@ -117,7 +117,7 @@ class Sincronizador():
 
         if docs:
             self.bulk_es_insert(docs)
-            print("sync from ca to es")
+            print("Sincronização do Cassandra para o Elasticsearch")
 
         self.marker = current_marker
 

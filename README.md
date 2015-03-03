@@ -8,6 +8,7 @@ Para rodar o programa, é necessário passar como parâmetro o período de tempo
     python run_sync.py 10
 
 Executando este comando o programa ficará rodando e, a cada 10 segundos vai verificar se existem novos dados e sincronizá-los entre os dois bancos.
+O programa irá exibir no console o número de verificações que foram realizadas atualmente e exibe se foi realizada uma sincronização.
 Para parar a execução é necessário pressionar as teclas Ctrl + c.
 
 ## Dados iniciais
