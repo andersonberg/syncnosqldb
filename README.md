@@ -24,7 +24,7 @@ Para o Elasticsearch, execute:
 
     python script_create_elasticsearch.py
 
-Os dados iniciais são idênticos para os dois scripts.
+Os dados iniciais são idênticos para os dois scripts. É importante notar que os scripts geram documentos com id's diferentes, então é interessante executar somente um dos dois scripts de geração de dados e executar o progama de sincronização para ter documentos com id's iguais nos dois bancos.
 
 ## O código
 
