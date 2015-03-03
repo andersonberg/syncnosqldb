@@ -6,11 +6,14 @@ import time
 
 
 def main():
-    periodo = sys.argv[1]
+    periodo = int(sys.argv[1])
     sync = Sincronizador()
+    count = 0
     while True:
         if periodo >= 0:
             sync.sync()
+            count += 1
+            print("Passo: %s" % count)
             time.sleep(periodo)
 
 

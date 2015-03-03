@@ -19,9 +19,8 @@ class Sincronizador():
     Classe que implementa a sincronização de dados entre os dois bancos
     """
 
-    def __init__(self, intervalo):
+    def __init__(self):
         self.id = "id"
-        self.intervalo = intervalo
         self.cassandra_table = "songs"
         self.elasticsearch_index = "songs"
         self.elasticsearch_type = "song"
@@ -32,7 +31,9 @@ class Sincronizador():
 
         self.es_session = Elasticsearch()
 
-        self.marker = int(time.time())
+        self.marker = datetime.now()
+
+        patch_cql_types()
 
     def bulk_es_insert(self, docs):
         """
@@ -72,8 +73,10 @@ class Sincronizador():
         insert_stat = self.ca_session.prepare("INSERT INTO songs (id, title, artist, timestamp) VALUES (?, ?, ?, ?);")
         batch = BatchStatement()
         for doc in docs:
-            doc['timestamp'] = datetime.strptime(doc["timestamp"], "%Y-%m-%d %H:%M:%S+%f")
+            doc['timestamp'] = datetime.strptime(doc["timestamp"], "%Y-%m-%dT%H:%M:%S.%f")
             batch.add(insert_stat, doc)
+
+        self.ca_session.execute(batch)
 
     def search_ca(self):
         """
@@ -91,7 +94,7 @@ class Sincronizador():
         """
 
         last_marker = self.marker
-        current_marker = int(time.time())
+        current_marker = datetime.now()
 
         # sincroniza do Elasticsearch para o Cassandra
         docs = []
@@ -100,6 +103,7 @@ class Sincronizador():
 
         if docs:
             self.insert_ca(docs)
+            print("sync from es to ca")
 
         # sincroniza do Cassandra para o Elasticsearch
         docs = []
@@ -107,10 +111,13 @@ class Sincronizador():
         for doc in ca_cursor:
             if doc["timestamp"] < last_marker or doc["timestamp"] > current_marker:
                 continue
-            docs.append(doc)
+            else:
+                doc["id"] = str(doc["id"])
+                docs.append(doc)
 
         if docs:
             self.bulk_es_insert(docs)
+            print("sync from ca to es")
 
         self.marker = current_marker
 
