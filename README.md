@@ -13,7 +13,7 @@ Para parar a execução é necessário pressionar as teclas Ctrl + c.
 
 ## Dados iniciais
 
-Foram desenvolvidos dois scripts para popular inicialmente os dois bancos com dados.
+Foram desenvolvidos dois scripts para popular inicialmente os dois bancos com dados. Os scripts estão no diretório populate_db.
 Para o Cassandra, basta executar:
 
     python script_create_cassandra.py
