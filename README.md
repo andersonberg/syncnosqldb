@@ -31,3 +31,6 @@ Os dados iniciais são idênticos para os dois scripts.
 Parte do código foi baseado neste projeto: https://github.com/arthurprs/Cassandra-Elasticsearch-Sync
 Que tem o mesmo propósito, sincronizar dados entre Cassandra e Elasticsearch, porém de forma mais complexa e com maior número de configurações.
 
+Ainda são necessários alguns ajustes:
+* Da forma como está implementado, o programa sempre irá fazer atualização nos dois bancos, pois é usado o tempo como parâmetro para determinar se uma atualização é necessária.
+* Para corrigir é possível fazer uso de um campo (atributo) version, determinando em qual versão um documento está atualmente.
